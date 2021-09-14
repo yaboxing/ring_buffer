@@ -9,15 +9,15 @@ LIBS += -lpthread
 #CFLAGS = -fprofile-arcs -ftest-coverage
 CFLAGS = -fpermissive
 
-INCLUDE = -I ./test/include/\
-	 -I ./ring_buffer/include/ \
+INCLUDE = -I ./test/ \
+	 -I ./ring_buffer/ \
 	 -I ./gtest \
 	 -I ./ 
 
-TARGET_SRC  = $(wildcard ./ring_buffer/src/*.c)
+TARGET_SRC  = $(wildcard ./ring_buffer/*.c)
 TARGET_OBJ = $(patsubst %.c, %.o, $(TARGET_SRC))
 
-TEST_SRC = $(wildcard ./test/src/*.cpp)
+TEST_SRC = $(wildcard ./test/*.cpp)
 TEST_OBJ = $(patsubst %.cpp,%.o, $(TEST_SRC))
 
 MAIN_SRC = $(wildcard ./$(gtest)/main/*.cpp)

@@ -1,4 +1,4 @@
-#include "googletest.h"
+#include "gtest.h"
 #include "ring_buffer.h"
 #include <string.h>
 
