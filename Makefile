@@ -25,7 +25,7 @@ MAIN_OBJ =$(patsubst %.cpp,%.o, $(MAIN_SRC))
 
 TARGET = main
 
-.PHONY: all clean
+.PHONY: all clean test
 
 all: $(TARGET)
 
@@ -42,6 +42,10 @@ SUBDIR = $(shell ls ./ -R | grep /)
 SUBDIRS = $(subst :,/,$(SUBDIR))
 SOURCE = $(foreach dir, $(SUBDIRS),$(wildcard $(dir)*.o))
 
+test:
+	./$(TARGET)
+
 clean:
-	-rm -rf *~ $(SOURCE) $(TARGET)
-	-find . -name "*.gc[dn][ao]" | xargs rm -rf
+	@rm -rf *~ $(SOURCE) $(TARGET)
+	@find . -name "*.gc[dn][ao]" | xargs rm -rf
+	@echo "clean success"
