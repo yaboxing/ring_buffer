@@ -1,51 +1,66 @@
+
 CC = g++
 
-gtest = gtest
+GTEST = gtest
 
-LIBS = -L ./$(gtest)/
+LIBS = -L ./$(GTEST)/
 LIBS += -lgtest
 LIBS += -lpthread
 
 #CFLAGS = -fprofile-arcs -ftest-coverage
-CFLAGS = -fpermissive
+#CFLAGS = -fpermissive
 
+CFLAGS =
 INCLUDE = -I ./test/ \
-	 -I ./ring_buffer/ \
-	 -I ./gtest \
-	 -I ./ 
+	  -I ./ring_buffer/ \
+	  -I $(GTEST)/ \
+	  -I ./ 
 
 TARGET_SRC  = $(wildcard ./ring_buffer/*.c)
 TARGET_OBJ = $(patsubst %.c, %.o, $(TARGET_SRC))
+COBJS = $(TARGET_OBJ)
 
 TEST_SRC = $(wildcard ./test/*.cpp)
 TEST_OBJ = $(patsubst %.cpp,%.o, $(TEST_SRC))
+CPPOBJS = $(TEST_OBJ)
 
-MAIN_SRC = $(wildcard ./$(gtest)/main/*.cpp)
+MAIN_SRC = $(wildcard ./*.cpp)
 MAIN_OBJ =$(patsubst %.cpp,%.o, $(MAIN_SRC))
+CPPOBJS += $(MAIN_OBJ) 
+
+SRCS = $(TARGET_SRC) $(TEST_SRC) $(MAIN_SRC)
+OBJS = $(TARGET_OBJ) $(TEST_OBJ) $(MAIN_OBJ)
 
 TARGET = main
 
-.PHONY: all clean test
+.PHONY: all clean test dump
 
 all: $(TARGET)
 
-$(TARGET): $(TARGET_OBJ) $(TEST_OBJ) $(MAIN_OBJ)
+$(TARGET): $(OBJS)
 	$(CC) -o $@ $^ $(LIBS) $(CFLAGS) $(INCLUDE)
 
-.c.o:$(TARGET_SRC)
+$(COBJS): %.o:%.c
 	$(CC) $(INCLUDE) $(CFLAGS) -o $@ -c $< 
 
-.cpp.o:$(TEST_SRC) $(MAIN_OBJ)
+$(CPPOBJS): %.o:%.cpp
 	$(CC) $(INCLUDE) $(CFLAGS) -o $@ -c $<
-
-SUBDIR = $(shell ls ./ -R | grep /)
-SUBDIRS = $(subst :,/,$(SUBDIR))
-SOURCE = $(foreach dir, $(SUBDIRS),$(wildcard $(dir)*.o))
 
 test:
 	./$(TARGET)
 
 clean:
-	@rm -rf *~ $(SOURCE) $(TARGET)
-	@find . -name "*.gc[dn][ao]" | xargs rm -rf
+	@rm -rf $(TARGET) $(OBJS)
 	@echo "clean success"
+
+dump:
+	@echo "CC:$(CC)"
+	@echo "`$(CC) -v`"
+	@echo "INC: $(INCLUDE)"
+	@echo "LIB: $(LIBS)"
+	@echo "CFLAGS: $(CFLAGS)"
+	@echo "SRCS: $(SRCS)"
+	@echo "OBJS: $(OBJS)"
+	@echo "TARGET: $(TARGET)"
+
+

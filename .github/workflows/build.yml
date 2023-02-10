@@ -12,14 +12,8 @@ jobs:
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
 
-      - name: Dump Github context
-        env:
-            GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump Concurrency context
-        env:
-            CONCURRENCY_CONTEXT: ${{ github.ref }}-${{ github.workflow }}-${{ (github.event_name == 'pull_request' && github.event.number) || (github.event_name == 'workflow_dispatch' && github.run_number) || github.sha }}
-        run: echo "$CONCURRENCY_CONTEXT"
+      - name: run: echo "The context of github is ${{ toJSON(github) }}"
+      - name: run: echo " The cuncurrency context is ${{ github.ref }}-${{ github.workflow }}-${{ (github.event_name == 'pull_request' && github.event.number) || (github.event_name == 'workflow_dispatch' && github.run_number) || github.sha }}"
 
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -32,29 +26,23 @@ jobs:
           ls ${{ github.workspace }}
 
       - name: checkout submdule
-        run: git submodule update --init
+        run: |
+            ./scripts/checkout_submodule.sh
 
       - name: build libgtest
         run: |
-            echo "current path: `pwd`"
-            cd third_party/googletest/
-            mkdir build && cd build && cmake .. && make -j8 && cd ..
-            echo "current path: `pwd`"
-            cp build/lib/libgtest.a ../ring_buffer/gtest/
-            cp googletest/include/gtest ../ring_buffer/gtest -raf
+            ./scripts/prebuild.sh
 
       - name: build
         run: |
-            make -j8
+            ./scripts/build.sh
 
       - name: test
         run: |
-            echo "upload target"
-            make test > /tmp/gtest.test.log 2>&1
-            cat /tmp/gtest.test.log
+            ./scripts/test.sh
 
       - name: upload target
         run: |
-            echo "upload target"
+            ./scripts/upload.sh
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
