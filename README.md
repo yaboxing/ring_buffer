@@ -8,7 +8,8 @@ example for gtest with c/c++
 This is a example for ring buffer、googletest and github action.
 
 ## usage
-``
+
+```
 git clone from-you-fork
 ./scripts/checkout_submodule.sh
 ./scripts/prebuild.sh
@@ -18,4 +19,4 @@ make test # for google test
 edit ....
 
 git push # for github action
-``
+```
