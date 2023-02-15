@@ -1,0 +1,79 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+            "label": "checkout submodule",
+            "type": "shell",
+            "command": "./scripts/checkout_submodule.sh",
+            "args": [],
+            "group": "build",
+            "problemMatcher": {
+                "base": "$gcc"
+            }
+        },
+        {
+            "label": "prebuild",
+            "type": "shell",
+            "command": "./scripts/prebuild.sh",
+            "args": [],
+            "group": "build",
+            "problemMatcher": {
+                "base": "$gcc"
+            }
+        },
+        {
+            "label": "main build",
+            "type": "shell",
+            "dependsOn":["checkout_submodule", "prebuild"],
+            "command": "./scripts/build.sh",
+            "args": [
+                "-B"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "isBackground": false,
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher":{
+                "base": "$gcc",
+                "fileLocation":[
+                    "relative",
+                    "${workspaceFolder}"
+                ]
+            }
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "./scripts/test.sh",
+            "group": "build",
+            "isBackground": false,
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher":{
+                "base": "$gcc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ]
+            }
+        },
+        {
+            "label": "upload",
+            "type": "shell",
+            "command": "./scripts/upload.sh",
+            "args": [],
+            "group": "build",
+            "problemMatcher": {
+                "base": "$gcc"
+            }
+        },
+    ]
+}

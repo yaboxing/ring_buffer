@@ -8,5 +8,5 @@ git status
 
 git submodule status
 
-git submodule update --init
+git submodule update --init --recursive
 

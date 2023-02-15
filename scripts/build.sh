@@ -4,4 +4,4 @@ set -u
 set -e
 #set -o pipefail
 
-make -j4
+make -j4 $@
