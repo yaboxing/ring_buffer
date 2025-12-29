@@ -129,3 +129,34 @@ TEST(rb_putput, putput_001)
 	EXPECT_EQ(50, rbPut(&rb, buf, CONFIG_BUFFER_LEN));
 	EXPECT_FALSE(rbIsEmpty(&rb));
 }
+
+TEST(rb_putget, putget003)
+{
+	unsigned char buf[CONFIG_BUFFER_LEN];
+	unsigned char buf2[CONFIG_BUFFER_LEN];
+
+	for(int i=0; i<CONFIG_BUFFER_LEN; i++)
+		buf2[i] = i;
+
+	ASSERT_EQ(0, rbInit(&rb, buff, CONFIG_BUFFER_LEN));
+	EXPECT_EQ(246, rbPut(&rb, buf2, 246));
+
+	memset(buf2, 0, CONFIG_BUFFER_LEN);
+	EXPECT_EQ(10, rbGet(&rb, buf2, 10));
+	EXPECT_EQ(236, rbUsed(&rb));
+
+	memset(buf2, 0xAA, CONFIG_BUFFER_LEN);
+	EXPECT_EQ(15, rbPut(&rb, buf2, 15));
+
+	memset(buf2, 0, CONFIG_BUFFER_LEN);
+	EXPECT_EQ(236 + 15, rbGet(&rb, buf2, rbUsed(&rb)));
+	EXPECT_EQ(10, buf2[0]);
+	EXPECT_EQ(11, buf2[1]);
+	EXPECT_EQ(0xAA, buf2[236 + 15 -1]);
+	EXPECT_EQ(0xAA, buf2[236 + 15 -2]);
+	EXPECT_EQ(0xAA, buf2[236 + 15 -10]);
+	EXPECT_EQ(0xAA, buf2[236 + 15 -15]);
+	EXPECT_NE(0xAA, buf2[236 + 15 -16]);
+
+	EXPECT_EQ(0, rbUsed(&rb));
+}
